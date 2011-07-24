@@ -24,7 +24,7 @@
     (try
       (f j)
       (finally
-        (.returnResource p j)))))
+       (.returnResource p j)))))
 
 (defn ping [p]
   (lease p (fn [^Jedis j] (.ping j))))
@@ -114,7 +114,7 @@
   (lease p (fn [^Jedis j] (.setex j k s v))))
 
 
-; Lists
+;; Lists
 
 (defn lpush [p ^String k ^String v]
   (lease p (fn [^Jedis j] (.lpush j k v))))
@@ -136,25 +136,25 @@
 
 (defn blpop [p ks ^Integer t]
   (lease p
-   (fn [^Jedis j]
-     (if-let [pair (.blpop j t ^"[Ljava.lang.String;" (into-array ks))]
-       (seq pair)))))
+         (fn [^Jedis j]
+           (if-let [pair (.blpop j t ^"[Ljava.lang.String;" (into-array ks))]
+             (seq pair)))))
 
 (defn rpop [p ^String k]
   (lease p (fn [^Jedis j] (.rpop j k))))
 
 (defn brpop [p ks ^Integer t]
   (lease p
-    (fn [^Jedis j]
-      (if-let [pair (.brpop j t ^"[Ljava.lang.String;" (into-array ks))]
-        (seq pair)))))
+         (fn [^Jedis j]
+           (if-let [pair (.brpop j t ^"[Ljava.lang.String;" (into-array ks))]
+             (seq pair)))))
 
 (defn lrange
   [p k ^Integer start ^Integer end]
   (lease p (fn [^Jedis j] (seq (.lrange j k start end)))))
 
 
-; Sets
+;; Sets
 
 (defn sadd [p ^String k ^String m]
   (lease p (fn [^Jedis j] (.sadd j k m))))
@@ -181,7 +181,7 @@
   (lease p (fn [^Jedis j] (.smembers j k d m))))
 
 
-; Sorted sets
+;; Sorted sets
 
 (defn zadd [p ^String k ^Double r ^String m]
   (lease p (fn [^Jedis j] (.zadd j k r m))))
@@ -203,27 +203,27 @@
 
 (defn zrange-byscore
   ([p ^String k ^Double min ^Double max]
-    (lease p (fn [^Jedis j] (seq (.zrangeByScore j k min max)))))
+     (lease p (fn [^Jedis j] (seq (.zrangeByScore j k min max)))))
   ([p ^String k ^Double min ^Double max ^Integer offset ^Integer count]
      (lease p (fn [^Jedis j] (seq (.zrangeByScore j k min max offset count))))))
 
 (defn zrevrange-byscore
   ([p ^String k ^Double max ^Double min]
-    (lease p (fn [^Jedis j] (seq (.zrevrangeByScore j k max min)))))
+     (lease p (fn [^Jedis j] (seq (.zrevrangeByScore j k max min)))))
   ([p ^String k ^Double max ^Double min ^Integer offset ^Integer count]
-    (lease p (fn [^Jedis j] (seq (.zrevrangeByScore j k max min offset count))))))
+     (lease p (fn [^Jedis j] (seq (.zrevrangeByScore j k max min offset count))))))
 
 (defn zrange-byscore-withscores
   ([p ^String k ^Double min ^Double max]
-    (lease p (fn [^Jedis j] (seq (.zrangeByScoreWithScores j k min max)))))
+     (lease p (fn [^Jedis j] (seq (.zrangeByScoreWithScores j k min max)))))
   ([p ^String k ^Double min ^Double max ^Integer offset ^Integer count]
      (lease p (fn [^Jedis j] (seq (.zrangeByScoreWithScores j k min max offset count))))))
 
 (defn zrevrange-byscore-withscores
   ([p ^String k ^Double max ^Double min]
-    (lease p (fn [^Jedis j] (seq (.zrevrangeByScoreWithScores j k max min)))))
+     (lease p (fn [^Jedis j] (seq (.zrevrangeByScoreWithScores j k max min)))))
   ([p ^String k ^Double max ^Double min ^Integer offset ^Integer count]
-    (lease p (fn [^Jedis j] (seq (.zrevrangeByScoreWithScores j k max min offset count))))))
+     (lease p (fn [^Jedis j] (seq (.zrevrangeByScoreWithScores j k max min offset count))))))
 
 (defn zrange [p ^String k ^Integer start ^Integer end]
   (lease p (fn [^Jedis j] (seq (.zrange j k start end)))))
@@ -250,7 +250,7 @@
   (lease p (fn [^Jedis j] (.zunionstore j d ^"[Ljava.lang.String;" (into-array k)))))
 
 
-; Hashes
+;; Hashes
 
 (defn hget [p ^String k ^String f]
   (lease p (fn [^Jedis j] (.hget j k f))))
@@ -289,7 +289,7 @@
   (lease p (fn [^Jedis j] (.hgetAll j k))))
 
 
-; Pub-Sub
+;; Pub-Sub
 
 (defn publish [p ^String c ^String m]
   (lease p (fn [^Jedis j] (.publish j c m))))
@@ -300,4 +300,4 @@
                   (onUnsubscribe [ch cnt])
                   (onMessage [ch msg] (handler ch msg)))]
     (lease p (fn [^Jedis j]
-      (.subscribe j pub-sub ^"[Ljava.lang.String;" (into-array chs))))))
+               (.subscribe j pub-sub ^"[Ljava.lang.String;" (into-array chs))))))
