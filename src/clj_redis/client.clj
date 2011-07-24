@@ -201,17 +201,29 @@
 (defn zscore [p ^String k ^String m]
   (lease p (fn [^Jedis j] (.zscore j k m))))
 
-(defn zrangebyscore
+(defn zrange-byscore
   ([p ^String k ^Double min ^Double max]
     (lease p (fn [^Jedis j] (seq (.zrangeByScore j k min max)))))
   ([p ^String k ^Double min ^Double max ^Integer offset ^Integer count]
-    (lease p (fn [^Jedis j] (seq (.zrangeByScore j k min max offset count))))))
+     (lease p (fn [^Jedis j] (seq (.zrangeByScore j k min max offset count))))))
 
-(defn zrangebyscore-withscore
+(defn zrevrange-byscore
+  ([p ^String k ^Double max ^Double min]
+    (lease p (fn [^Jedis j] (seq (.zrevrangeByScore j k max min)))))
+  ([p ^String k ^Double max ^Double min ^Integer offset ^Integer count]
+    (lease p (fn [^Jedis j] (seq (.zrevrangeByScore j k max min offset count))))))
+
+(defn zrange-byscore-withscores
   ([p ^String k ^Double min ^Double max]
-    (lease p (fn [^Jedis j] (seq (.zrangeByScoreWithScore j k min max)))))
+    (lease p (fn [^Jedis j] (seq (.zrangeByScoreWithScores j k min max)))))
   ([p ^String k ^Double min ^Double max ^Integer offset ^Integer count]
-    (lease p (fn [^Jedis j] (seq (.zrangeByScoreWithScore j k min max offset count))))))
+     (lease p (fn [^Jedis j] (seq (.zrangeByScoreWithScores j k min max offset count))))))
+
+(defn zrevrange-byscore-withscores
+  ([p ^String k ^Double max ^Double min]
+    (lease p (fn [^Jedis j] (seq (.zrevrangeByScoreWithScores j k max min)))))
+  ([p ^String k ^Double max ^Double min ^Integer offset ^Integer count]
+    (lease p (fn [^Jedis j] (seq (.zrevrangeByScoreWithScores j k max min offset count))))))
 
 (defn zrange [p ^String k ^Integer start ^Integer end]
   (lease p (fn [^Jedis j] (seq (.zrange j k start end)))))
@@ -225,10 +237,10 @@
 (defn zrem [p ^String k ^String m]
   (lease p (fn [^Jedis j] (.zrem j k m))))
 
-(defn zremrangebyrank [p ^String k ^Integer start ^Integer end]
+(defn zremrange-byrank [p ^String k ^Integer start ^Integer end]
   (lease p (fn [^Jedis j] (.zremrangeByRank j k start end))))
 
-(defn zremrangebyscore [p ^String k ^Double start ^Double end]
+(defn zremrange-byscore [p ^String k ^Double start ^Double end]
   (lease p (fn [^Jedis j] (.zremrangeByScore j k start end))))
 
 (defn zinterstore [p ^String d k]
