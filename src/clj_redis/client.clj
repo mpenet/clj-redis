@@ -104,8 +104,8 @@
 (defn append [p ^String k ^String v]
   (lease p (fn [^Jedis j] (.append j k v))))
 
-(defn getrange [p ^String k ^Integer start ^Integer end]
-  (lease p (fn [^Jedis j] (.substring j k start end))))
+(defn substr [p ^String k ^Integer start ^Integer end]
+  (lease p (fn [^Jedis j] (.substr j k start end))))
 
 (defn setnx [p ^String k ^String v]
   (lease p (fn [^Jedis j] (.setnx j k v))))
@@ -122,13 +122,16 @@
 (defn rpush [p ^String k ^String v]
   (lease p (fn [^Jedis j] (.rpush j k v))))
 
-(defn lset [p ^String k ^Integer i ^String v]
+(defn lset [p ^String k ^Long i ^String v]
   (lease p (fn [^Jedis j] (.lset j k i v))))
+
+(defn lrem [p ^String k ^Long c ^String v]
+  (lease p (fn [^Jedis j] (.lset j k c v))))
 
 (defn llen [p ^String k]
   (lease p (fn [^Jedis j] (.llen j k))))
 
-(defn lindex [p ^String k ^Integer i]
+(defn lindex [p ^String k ^Long i]
   (lease p (fn [^Jedis j] (.lindex j k i))))
 
 (defn lpop [p ^String k]
@@ -149,9 +152,11 @@
            (if-let [pair (.brpop j t ^"[Ljava.lang.String;" (into-array ks))]
              (seq pair)))))
 
-(defn lrange
-  [p k ^Integer start ^Integer end]
+(defn lrange [p k ^Long start ^Long end]
   (lease p (fn [^Jedis j] (seq (.lrange j k start end)))))
+
+(defn ltrim [p k ^Long start ^Long end]
+  (lease p (fn [^Jedis j] (.ltrim j k start end))))
 
 
 ;; Sets
@@ -287,6 +292,20 @@
 
 (defn hgetall [p ^String k]
   (lease p (fn [^Jedis j] (.hgetAll j k))))
+
+;; Bits
+
+(defn setbit [p ^String k ^Long offset ^Boolean value]
+  (lease p (fn [^Jedis j]  (.setbit j k offset value))))
+
+(defn getbit [p ^String k ^Long offset]
+  (lease p (fn [^Jedis j]  (.getbit j k offset))))
+
+(defn setrange [p ^String k ^Long offset ^String value]
+  (lease p (fn [^Jedis j]  (.setrange j k offset value))))
+
+(defn getrange [p ^String k ^Long start ^Long end]
+  (lease p (fn [^Jedis j]  (.getrange j k start end))))
 
 
 ;; Pub-Sub
